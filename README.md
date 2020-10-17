@@ -1,6 +1,6 @@
 # CMU Interactive Data Science Assigment 3
 
-* **Team members**: Michael Wang (yuanxin) and Aditya Shetty (adshetty)
+* **Team members**: Michael Wang (yuanxinw) and Aditya Shetty (adshetty)
 * **Online URL**: https://s4a.streamlit.io/cmu-ids-2020/a3-template/master/streamlit_app.py/+/
 
 ## Instructions
