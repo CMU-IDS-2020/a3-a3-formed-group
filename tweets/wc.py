@@ -33,7 +33,7 @@ remove_esp = st.sidebar.checkbox("Remove Spanish Stop Words")
 
 show_chart = st.button('Show Distribution')
 slider_ph = st.empty()
-value = slider_ph.slider("Choose threshold", min_value=min_val, max_value=5*min_val, step=10)
+value = slider_ph.slider("Choose Max Frequency", min_value=min_val, max_value=5*min_val, step=10)
 
 #user input
 custom = st.sidebar.text_input('Add Custom Stopwords (comma separated)')
@@ -57,13 +57,13 @@ st.cache(suppress_st_warning=True)
 basic_chart = alt.Chart(tweets[tweets['counts'] <= value]).mark_line().encode(
     x='index',
     y='counts'
-)
+).interactive()
 
 
 #create lemmatized dictionary
 st.cache(suppress_st_warning=True) 
 lemmatizer = WordNetLemmatizer()
-lemma_dic = {lemmatizer.lemmatize(k.strip()): v for k, v in raw_dic.items() if type(k) == str}
+lemma_dic = {lemmatizer.lemmatize(k.strip()): v for k, v in raw_dic.items()}
 
 #choose dictionary to generate wordcloud
 st.cache(suppress_st_warning=True)   
