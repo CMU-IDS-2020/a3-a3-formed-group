@@ -15,7 +15,7 @@ def load(inp):
 df = load("covid_19_data.csv")
 # Some manipulations for date and months
 df['Date'] = pd.to_datetime(df['Date'])
-df = df[df['Date'] < date.today()]
+df = df[df['Date'].dt.date < date.today()]
 df['Date'] = df['Date'].dt.strftime('%Y-%m-%d')
 df["month"] = pd.DatetimeIndex(df['Date']).month
 
@@ -37,15 +37,15 @@ st.title('Covid-19 Interactive Dashboard')
 ######################################
 st.subheader("For users")
 # Select Date Range
-st.write("Please specify how many months you want to view (Default last 2 months)")
+st.write("Please specify how many months you want to view (Default last 1 months)")
 last_month_value = st.slider("",
-                             min_value=0, max_value=6, value=2, step=1)
+                             min_value=1, max_value=6, value=1, step=1)
 max_month = df["month"].max()
 df = df[df['month'] > max_month - last_month_value]
 
 # Filter by Region
 st.write("Please select contries of interest")
-region_names = st.multiselect(label='', options=list(df.Region.unique())[::-1], default=["Mainland China", "Canada"])
+region_names = st.multiselect(label='', options=list(df.Region.unique())[::-1], default=["Mainland China", "Canada", "UK", "Japan", "South Korea"])
 if len(region_names) > 0:
     df = df[df['Region'].isin(region_names)]
 
@@ -54,11 +54,12 @@ if len(region_names) > 0:
 # Create interactive, multi-viewed (each view communicate with each other) plots
 # histogram/bar plot, scatter plot, cascaded line plot, maps, heatmap
 ######################################
-# Part I: Curves for different contries
+# Part I: Top 5 total for 3
+# Part II: Curves for different contries
 st.subheader('Comparision of different countries')
 st.write("Select metrics to view")
 option = st.selectbox('', ('Confirmed', 'Deaths', 'Recovered'))
-number_versus_time  =alt.Chart(df).mark_line().encode(
+number_versus_time  =alt.Chart(df).mark_circle().encode(
     x=alt.X('Date', title='Date'),
     y=alt.Y(option,  title=option),
     color='Region',
@@ -79,20 +80,33 @@ scatter = alt.Chart(df).mark_point().encode(
     tooltip = ['Confirmed', 'Deaths', 'Recovered']
 ).properties(
     width=600, height=400
-).interactive()
+)
 remainder_var = [item for item in ['Confirmed', 'Deaths', 'Recovered'] if item not in variables][0]
 picked = alt.selection_interval()
 
-bar_plots = alt.Chart(df).mark_rect().encode(
-    x="Confirmed",
+bar_plot_1 = alt.Chart(df).mark_bar().encode(
+    x="Region",
     y="Recovered",
     color='Region',
     tooltip = ['Confirmed', 'Deaths', 'Recovered']
-).transform_filter(picked)
+)
+bar_plot_2 = alt.Chart(df).mark_bar().encode(
+    x="Region",
+    y="Confirmed",
+    color='Region',
+    tooltip = ['Confirmed', 'Deaths', 'Recovered']
+)
+bar_plot_3 = alt.Chart(df).mark_bar().encode(
+    x="Region",
+    y="Deaths",
+    color='Region',
+    tooltip = ['Confirmed', 'Deaths', 'Recovered']
+)
+bar_plots = bar_plot_1 + bar_plot_2 + bar_plot_3
 
 st.write(
         scatter.encode(color=alt.condition(picked, "Region", alt.value("lightgrey")))
-        .add_selection(picked) & bar_plots.interactive())
+        .add_selection(picked) & bar_plots.transform_filter(picked))
 
 
 # Part III: World Map
