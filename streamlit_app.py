@@ -7,12 +7,11 @@ import streamlit as st
 import pydeck as pdk
 
 # wordcloud imports
-from wordcloud import WordCloud
+import wordcloud
 import matplotlib.pyplot as plt
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
-import webbrowser
 
 nltk.download('wordnet')
 nltk.download('stopwords')
@@ -33,7 +32,7 @@ df = df[df['Date'].dt.date < date.today()]
 df['Date'] = df['Date'].dt.strftime('%Y-%m-%d')
 df["month"] = pd.DatetimeIndex(df['Date']).month
 
-url = "https://en.wikipedia.org/wiki/Lemmatisation"
+
 # load Dataframe for Wordcloud
 st.cache(suppress_st_warning=True)
 tweets = load(
@@ -138,10 +137,10 @@ else:
 # load interactivity elements
 st.cache(suppress_st_warning=True)
 st.header('Word Usage in #Covid-19 Tweets (Jan-Mar)')
+color_func_twit = wordcloud.get_single_color_func("#00acee")
 st.sidebar.write("Choose Word Cloud Options")
 remove_eng = st.sidebar.checkbox("Remove English Stop Words")
 remove_esp = st.sidebar.checkbox("Remove Spanish Stop Words")
-
 show_chart = st.button('Show Distribution')
 slider_ph = st.empty()
 value = slider_ph.slider("Choose Max Frequency", min_value=min_val,
@@ -167,7 +166,7 @@ if(remove_esp):
 # create chart
 st.cache(suppress_st_warning=True)
 basic_chart = alt.Chart(tweets[tweets['counts'] <= value]).mark_bar().encode(
-    x='index',
+    x=alt.X('index', title='Rank in Corpus'),
     y='counts'
 ).interactive()
 
@@ -183,16 +182,16 @@ if(lemma):
     dic = {k: v for k, v in lemma_dic.items(
     ) if v <= value and k not in stop_words}
     st.sidebar.write("Words will be Lemmatized")
-    if st.sidebar.button("More Info (External Link)"):
-        webbrowser.open_new_tab(url)
+    st.sidebar.markdown("[More Info (External Link)](https://en.wikipedia.org/wiki/Lemmatisation)")
+
 else:
     dic = {k: v for k, v in raw_dic.items() if v <= value and k not in stop_words}
 
 # create wordcloud
 st.cache(suppress_st_warning=True)
-wordcloud = WordCloud().generate_from_frequencies(frequencies=dic)
+wc = wordcloud.WordCloud(color_func=color_func_twit).generate_from_frequencies(frequencies=dic)
 fig = plt.figure()
-plt.imshow(wordcloud, interpolation='bilinear')
+plt.imshow(wc, interpolation='bilinear')
 plt.axis("off")
 st.pyplot(fig)
 if(show_chart):
