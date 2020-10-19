@@ -14,6 +14,8 @@ from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 import webbrowser
 
+nltk.download('wordnet')
+nltk.download('stopwords')
 
 ######################################
 # Load data and cache
