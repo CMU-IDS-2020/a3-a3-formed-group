@@ -4,6 +4,7 @@ from datetime import date
 import altair as alt
 import pandas as pd
 import streamlit as st
+import pydeck as pdk
 
 # wordcloud imports
 from wordcloud import WordCloud
@@ -45,19 +46,13 @@ raw_dic = pd.Series(tweets.counts.values, index=tweets.term).to_dict()
 # Introductory text
 ######################################
 st.title('Covid-19 Interactive Dashboard')
-# st.sidebar.markdown('''
-# Dataset reference:
-#
-# Designers: Aditya and Yuanxin
-#
-# Functionalities:
-# ''')
+
 
 ######################################
 # Add different fileters for users
 # Generate a filtered df
 ######################################
-st.subheader("For users")
+st.subheader("For users' selection")
 # Select Date Range
 st.write("Please specify how many months you want to view (Default last 1 months)")
 last_month_value = st.slider("",
@@ -77,7 +72,6 @@ if len(region_names) > 0:
 # Create interactive, multi-viewed (each view communicate with each other) plots
 # histogram/bar plot, scatter plot, cascaded line plot, maps, heatmap
 ######################################
-# Part I: Top 5 total for 3
 # Part II: Curves for different contries
 st.subheader('Comparision of different countries')
 st.write("Select metrics to view")
@@ -138,10 +132,7 @@ else:
         .add_selection(picked) & bar_plot.transform_filter(picked))
 
 
-# Part III: World Map
-
-# Part IV: Word Cloud!
-
+# Part III: Word Cloud!
 # load interactivity elements
 st.cache(suppress_st_warning=True)
 st.header('Word Usage in #Covid-19 Tweets (Jan-Mar)')
