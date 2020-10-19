@@ -189,10 +189,13 @@ else:
 
 # create wordcloud
 st.cache(suppress_st_warning=True)
-wc = wordcloud.WordCloud(color_func=color_func_twit).generate_from_frequencies(frequencies=dic)
-fig = plt.figure()
-plt.imshow(wc, interpolation='bilinear')
-plt.axis("off")
-st.pyplot(fig)
-if(show_chart):
-    st.altair_chart(basic_chart)
+if(any(dic)):
+    wc = wordcloud.WordCloud(color_func=color_func_twit).generate_from_frequencies(frequencies=dic)
+    fig = plt.figure()
+    plt.imshow(wc, interpolation='bilinear')
+    plt.axis("off")
+    st.pyplot(fig)
+    if(show_chart):
+        st.altair_chart(basic_chart)
+else:
+    st.write("All words have been filtered out. Try removing Stopwords.")
