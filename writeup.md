@@ -2,7 +2,6 @@
 
 ![The Covid-19 Interactive Dashboard](screenshot.png)
 
-TODO: Short abstract describing the main goals and how you achieved them.
 
 ## Project Goals
 
@@ -12,6 +11,8 @@ from finding two datasets - one on health data and one on Twitter data. Instead 
 ## Design
 
 TODO: **A rationale for your design decisions.** How did you choose your particular visual encodings and interaction techniques? What alternatives did you consider and how did you arrive at your ultimate choices?
+
+For the csv health dataset, there are three major visual encodings: country selection, correlation exploration and time series visuazalition. Since there are more than 50 countries in the dataset, it would be infeasible to display information for all countries in a single page; therefore, we include the country selection section. We also think that users will find by insights by exploring the correlations between either 2 of the three numerical features (confirmed, death and recovered).Also, the users can dive into the details of the points they interactively select in the figure. Finally, time seires feature is necessary for users to understand the trends. For alternatives, we considered including a world map using pydeck library, but it seems to take very long for the application to load, so we had to discard this feature.
 
 The tweet dataset captured term frequency of tweets with Covid related hashtags over a 3 month period from January to March. Instead of using traditional visualization techniques from completely processed data, we thought it would be engaging for the user to perform their own processing. The primary visualization element is a wordcloud which simply sizes terms relative to their frequency in a given corpus. This is fairly straightforward, but most wordcloud packages only select the top N terms in order to keep their visual density low. We decided to let the user modify the word cloud by choosing a threshold frequency and filtering out stopwords. Common English and Spanish stopwords were provided as sidebar
 options while additional stopwords could be custom-provided through the text input field. Under certain configurations, different tenses or forms of the same word would occupy a lot of the visual space in the word cloud. We provided the option for the user to choose to lemmatize the corpus. This improves the use of the visual space in the word cloud by filtering redundant forms. Finally a hidden bar graph provides a quantitave explanation of the frequency distribution of the word cloud.
